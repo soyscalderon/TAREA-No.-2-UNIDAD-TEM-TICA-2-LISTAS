@@ -136,38 +136,65 @@ float solicitar_flotante()
 void eliminar_elemento(NODO **cabeza)
 {
     system("cls");
-    int dato;   
+    int dato;
     NODO *previo, *actual;
     previo = NULL;
     actual = *cabeza;
 
     if (actual == NULL)
     {
-        printf("ERROR. No existen nodos.");
+        printf("ERROR. No existen nodos.\n");
     }
     else
     {
         printf("DATO A ELIMINAR\n");
         dato = solicitar_entero();
-        
-        // Hallar el nodo (o no)
+
+        // recorrer la lista y parar en el nodo hallado (o hasta el final)
         while (actual != NULL && actual->dato != dato)
         {
             previo = actual;
             actual = actual->siguiente;
         }
 
+        // Llego al final sin hallarlo
         if (actual == NULL)
         {
             printf("No se encontro nodo con el valor ingresado.");
         }
+
+        // Si hallo el nodo a eliminar
         else
         {
-            previo->siguiente = actual->siguiente;
-            if (actual->siguiente != NULL)
+            // El nodo encontrado fue el primero
+            if (previo == NULL)
             {
-                (actual->siguiente)->anterior = previo;
+                // Era el UNICO nodo
+                if (actual->siguiente == NULL)
+                {
+                    *cabeza = NULL;
+
+                    // Habia mas nodos
+                }
+                else
+                {
+                    *cabeza = actual->siguiente;
+                }
+
+                // el nodo hallado esta en medio o al final
             }
+            else
+            {
+                previo->siguiente = actual->siguiente;
+
+                // el nodo hallado esta al final
+                if (actual->siguiente != NULL)
+                {
+                    (actual->siguiente)->anterior = previo;
+                }
+            }
+
+            // Borrar el nodo
             free(actual);
             printf("Valor eliminado correctamente.");
         }
@@ -181,7 +208,7 @@ void agregar_elemento(NODO **cabeza)
 {
     system("cls");
     // Apuntadores de trabajo
-    NODO *previo = NULL, *siguiente = NULL, *actual = NULL;
+    NODO *previo = NULL, *actual = NULL;
     NODO *nuevo = malloc(sizeof(NODO));
     if (nuevo != NULL)
     {
