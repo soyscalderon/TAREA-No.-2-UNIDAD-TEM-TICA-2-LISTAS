@@ -16,9 +16,46 @@ float solicitar_flotante();
 void eliminar_elemento(NODO **);
 void agregar_elemento(NODO **);
 
-int main()
+void imprimir_lista(NODO *);
+
+int main() 
 {
     NODO *cabeza = NULL;
+    int op = 0;
+
+    system("cls");
+    while (op != 4)
+    {
+        printf("LISTAS DOBLEMENTE ENCADENADAS\n"
+               "1.Ingresar un dato.\n"
+               "2.Eliminar un dato.\n"
+               "3.Imprimir lista.\n"
+               "4.Salir de programa\n\n"
+               "OPCION\n");
+        op = solicitar_entero();
+
+        switch (op)
+        {
+        case 1:
+            agregar_elemento(&cabeza);
+            break;
+        case 2:
+            eliminar_elemento(&cabeza);
+            break;
+        case 3:
+            imprimir_lista(cabeza);
+            break;
+        case 4:
+            printf("\nSaliendo del programa...\n");
+            system("pause");
+            break;
+        default:
+            printf("ERROR. Opcion incorrecta.\n");
+            system("pause");
+            system("cls");
+            break;
+        }
+    }
 
     free(cabeza);
     return 0;
@@ -99,14 +136,184 @@ float solicitar_flotante()
     return num;
 }
 
-//Se pasa como doble puntero en caso de que se quiera borrar el nodo al que apunta la cabeza
+// Se pasa como doble puntero en caso de que se quiera borrar el nodo al que apunta la cabeza
 void eliminar_elemento(NODO **cabeza)
 {
+    system("cls");
+    int dato;
+    NODO *previo, *actual;
+    previo = NULL;
+    actual = *cabeza;
 
+    if (actual == NULL)
+    {
+        printf("ERROR. No existen nodos.\n");
+    }
+    else
+    {
+        printf("DATO A ELIMINAR\n");
+        dato = solicitar_entero();
+
+        // recorrer la lista y parar en el nodo hallado (o hasta el final)
+        while (actual != NULL && actual->dato != dato)
+        {
+            previo = actual;
+            actual = actual->siguiente;
+        }
+
+        // Llego al final sin hallarlo
+        if (actual == NULL)
+        {
+            printf("No se encontro nodo con el valor ingresado.\n");
+        }
+
+        // Si hallo el nodo a eliminar
+        else
+        {
+            // El nodo encontrado fue el primero
+            if (previo == NULL)
+            {
+                // Era el UNICO nodo
+                if (actual->siguiente == NULL)
+                {
+                    *cabeza = NULL;
+
+                    // Habia mas nodos
+                }
+                else
+                {
+                    *cabeza = actual->siguiente;
+                }
+
+                // el nodo hallado esta en medio o al final
+            }
+            else
+            {
+                previo->siguiente = actual->siguiente;
+
+                // el nodo hallado esta al final
+                if (actual->siguiente != NULL)
+                {
+                    (actual->siguiente)->anterior = previo;
+                }
+            }
+
+            // Borrar el nodo
+            free(actual);
+            printf("Valor eliminado correctamente.\n");
+        }
+    }
+    system("pause");
+    system("cls");
 }
 
-//Se pasa como doble puntero en caso de que se quiera borrar el nodo al que apunta la cabeza
+// Se pasa como doble puntero en caso de que se quiera agregar en el nodo al que apunta la cabeza
 void agregar_elemento(NODO **cabeza)
 {
+    system("cls");
+    // Apuntadores de trabajo
+    NODO *previo = NULL, *actual = NULL, *ultimo = NULL;
+    NODO *nuevo = malloc(sizeof(NODO));
+    previo = NULL;
+    actual = *cabeza;
+    ultimo = *cabeza;
 
+    // verificar que se halla reservado espacio en memoria
+    if (nuevo != NULL)
+    {
+        // Asignacion inicial de valores del nodo nuevo
+        nuevo->anterior = NULL;
+        printf("DATO A AGREGAR\n");
+        nuevo->dato = solicitar_entero();
+        nuevo->siguiente = NULL;
+
+        // La lista esta vacia
+        if (actual == NULL)
+        {
+            *cabeza = nuevo;
+            printf("Nueva lista creada.\n");
+        }
+
+        // La lista tiene uno o mas nodos
+        else
+        {
+            // Ciclo para recorrer el arreglo y posicionar actual en el nodo con numero mayor siguiente al nodo a ingresar
+
+            while (actual != NULL)
+            {
+                if (actual->dato < nuevo->dato)
+                {
+                    previo = actual;
+                    actual = actual->siguiente;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            // Insertar al final
+            if (actual == NULL)
+            {
+                previo->siguiente = nuevo;
+                nuevo->anterior = previo;
+                nuevo->siguiente = *cabeza;
+                (*cabeza)->anterior = nuevo;
+            }
+            // Ingresar al principio
+            else if (previo == NULL)
+            {
+                while (ultimo->siguiente != actual) {
+                    ultimo = ultimo->siguiente;
+                }
+                nuevo->anterior = ultimo;
+                ultimo->siguiente = nuevo;
+                nuevo->siguiente = actual;
+                actual->anterior = nuevo;
+                *cabeza = nuevo;
+            }
+            // Caso de que sea por insertar en medio
+            else
+            {
+                previo->siguiente = nuevo;
+                nuevo->anterior = previo;
+                nuevo->siguiente = actual;
+                actual->anterior = nuevo;
+            }
+            printf("Se ingreso correctamente el nodo.\n");
+        }
+    }
+    else
+    {
+        printf("No se logro alocar memoria para el nuevo nodo.\n");
+    }
+
+    system("pause");
+    system("cls");
+}
+
+void imprimir_lista(NODO *cabeza)
+{
+    system("cls");
+    printf("IMPRESION DE LISTA\n");
+    NODO *actual = NULL;
+    actual = cabeza;
+
+    if (actual == NULL)
+    {
+        printf("Lista vacia.\n");
+    }
+    else if (actual->siguiente == NULL)
+    {
+        printf("%p <-- %d --> %p\n", actual->anterior, actual->dato, actual->siguiente);
+    }
+    else
+    {  
+        do {
+            printf("%p <-- %d --> %p\n", actual->anterior, actual->dato, actual->siguiente);
+            actual = actual->siguiente;
+        } while (actual != cabeza);
+    }
+    system("pause");
+    system("cls");
 }
