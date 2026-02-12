@@ -10,11 +10,11 @@ typedef struct nodo
 } NODO;
 
 int solicitar_entero();
-float solicitar_flotante();
 
 void eliminar_elemento(NODO **);
 void agregar_elemento(NODO **);
 void imprimir_lista(NODO *);
+void liberar_lista(NODO **);
 
 int main()
 {
@@ -45,6 +45,7 @@ int main()
             break;
         case 4:
             printf("\nSaliendo del programa...\n");
+            liberar_lista(&cabeza);
             system("pause");
             break;
         default:
@@ -88,49 +89,6 @@ int solicitar_entero()
     } while (p == 0);
 
     num = atoi(Aux);
-    return num;
-}
-
-float solicitar_flotante()
-{
-    char aux[' '];
-    int p, y, i, c = 0, n = 0;
-    double num;
-    do
-    {
-        // system("cls");
-        printf("Introduzca un valor flotante: ");
-        fflush(stdin);
-        gets(aux);
-        y = strlen(aux);
-        c = 0;
-        n = 0;
-        for (i = 0; i < y; i++)
-        {
-            if (isdigit(aux[i]) || aux[i] == '.' || aux[i] == '-')
-            {
-                p = 1;
-                if (aux[i] == 46)
-                    c++;
-                if (aux[i] == '-')
-                    n++;
-            }
-            else
-                p = 0;
-
-            // Linea modificada para que no pueda haber '-' que no sean en el principio
-            if (p == 0 || c > 1 || n > 1 || ((n == 1) && aux[0] != '-'))
-            {
-                p = 0;
-                printf("\n\n\t ERROR, DATO MAL INTRODUCIDO \n\n");
-                break;
-            }
-        }
-        if (y == 0)
-            p = 0;
-    } while (p == 0);
-
-    num = atof(aux);
     return num;
 }
 
@@ -303,4 +261,24 @@ void imprimir_lista(NODO *cabeza)
     }
     system("pause");
     system("cls");
+}
+
+void liberar_lista(NODO **cabeza)
+{
+    NODO *ptr = NULL, *temp = NULL;
+    ptr = *cabeza;
+
+    if (ptr == NULL) {
+        return; 
+    }
+
+    ptr = ptr->siguiente;
+
+    while (ptr != *cabeza) {
+        temp = ptr;
+        ptr = ptr->siguiente;
+        free(temp);
+    } 
+
+    free(*cabeza);
 }

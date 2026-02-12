@@ -11,7 +11,6 @@ typedef struct nodo
 } NODO;
 
 int solicitar_entero();
-float solicitar_flotante();
 
 char eliminar_elemento(NODO **);
 void agregar_elemento(NODO **);
@@ -27,7 +26,7 @@ int main()
     system("cls");
     while (op != 4)
     {
-        printf("LISTAS DOBLEMENTE ENCADENADAS\n"
+        printf("LISTAS CIRCULARES DOBLEMENTE ENCADENADAS\n"
                "1.Ingresar un dato.\n"
                "2.Eliminar un dato.\n"
                "3.Imprimir lista.\n"
@@ -53,7 +52,6 @@ int main()
             if (liberar_lista(&cabeza) == 'a') {
                 free(cabeza);
                 cabeza = NULL;
-                printf("si");
             }
             printf("\nSaliendo del programa...\n");
             break;
@@ -97,49 +95,6 @@ int solicitar_entero()
     } while (p == 0);
 
     num = atoi(Aux);
-    return num;
-}
-
-float solicitar_flotante()
-{
-    char aux[' '];
-    int p, y, i, c = 0, n = 0;
-    double num;
-    do
-    {
-        // system("cls");
-        printf("Introduzca un valor flotante: ");
-        fflush(stdin);
-        gets(aux);
-        y = strlen(aux);
-        c = 0;
-        n = 0;
-        for (i = 0; i < y; i++)
-        {
-            if (isdigit(aux[i]) || aux[i] == '.' || aux[i] == '-')
-            {
-                p = 1;
-                if (aux[i] == 46)
-                    c++;
-                if (aux[i] == '-')
-                    n++;
-            }
-            else
-                p = 0;
-
-            // Linea modificada para que no pueda haber '-' que no sean en el principio
-            if (p == 0 || c > 1 || n > 1 || ((n == 1) && aux[0] != '-'))
-            {
-                p = 0;
-                printf("\n\n\t ERROR, DATO MAL INTRODUCIDO \n\n");
-                break;
-            }
-        }
-        if (y == 0)
-            p = 0;
-    } while (p == 0);
-
-    num = atof(aux);
     return num;
 }
 
@@ -189,7 +144,7 @@ char eliminar_elemento(NODO **cabeza)
                     printf("Se ha vaciado la lista\n");
                     system("pause");
                     system("cls");
-                    return '\0';
+                    return '\0'; //Regresa un caracter indicando que queda un unico nodo, y se borrara desde donde se llamó
                     
                 }
                 // Habia mas nodos
@@ -215,7 +170,7 @@ char eliminar_elemento(NODO **cabeza)
     }
     system("pause");
     system("cls");
-    return 'a';
+    return 'a'; //Regresa un caracter de confirmacion para saber que se elimino con exito y aun quedan nodos
 }
 
 // Se pasa como doble puntero en caso de que se quiera agregar en el nodo al que apunta la cabeza
@@ -324,13 +279,14 @@ void imprimir_lista(NODO *cabeza)
     system("cls");
 }
 
+//Funcion para liberar la lista a la hora de finalizar el programa
 char liberar_lista(NODO **cabeza)
 {
     NODO *ptr = NULL, *temp = NULL;
     ptr = *cabeza;
 
     if (ptr == NULL) {
-        return 'b';
+        return 'b'; //Regresa un caracter indicando que la lista era nula, para no liberar memoria que no esta asignada
     }
 
     ptr = ptr->siguiente;
@@ -341,5 +297,5 @@ char liberar_lista(NODO **cabeza)
         free(temp);
     } 
 
-    return 'a';
+    return 'a'; //Regresa un caracter indicando que se liberaron todos los nodos restantes, y que puede eliminar el nodo cabecera donde se llamó
 }
