@@ -173,7 +173,7 @@ void agregar_elemento(NODO **cabeza)
     previo=NULL;
     actual = *cabeza;
 
-    // verificar que se halla reservado espacio en memoria
+    // verificar que se haya reservado espacio en memoria
     if (nuevo != NULL)
     {
         // Asignacion inicial de valores del nodo nuevo
