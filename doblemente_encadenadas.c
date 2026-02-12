@@ -272,13 +272,9 @@ void liberar_lista(NODO **cabeza)
         return; 
     }
 
-    ptr = ptr->siguiente;
-
-    while (ptr != *cabeza) {
+    while (ptr != NULL) {
         temp = ptr;
         ptr = ptr->siguiente;
         free(temp);
     } 
-
-    free(*cabeza);
 }
