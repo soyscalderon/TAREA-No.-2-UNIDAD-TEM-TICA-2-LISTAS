@@ -13,10 +13,11 @@ typedef struct nodo
 int solicitar_entero();
 float solicitar_flotante();
 
-void eliminar_elemento(NODO **);
+char eliminar_elemento(NODO **);
 void agregar_elemento(NODO **);
 
 void imprimir_lista(NODO *);
+char liberar_lista(NODO **);
 
 int main() 
 {
@@ -40,14 +41,21 @@ int main()
             agregar_elemento(&cabeza);
             break;
         case 2:
-            eliminar_elemento(&cabeza);
+            if  (eliminar_elemento(&cabeza) == '\0') {
+                free(cabeza);
+                cabeza = NULL;
+            }
             break;
         case 3:
             imprimir_lista(cabeza);
             break;
         case 4:
+            if (liberar_lista(&cabeza) == 'a') {
+                free(cabeza);
+                cabeza = NULL;
+                printf("si");
+            }
             printf("\nSaliendo del programa...\n");
-            system("pause");
             break;
         default:
             printf("ERROR. Opcion incorrecta.\n");
@@ -57,7 +65,6 @@ int main()
         }
     }
 
-    free(cabeza);
     return 0;
 }
 
@@ -137,7 +144,7 @@ float solicitar_flotante()
 }
 
 // Se pasa como doble puntero en caso de que se quiera borrar el nodo al que apunta la cabeza
-void eliminar_elemento(NODO **cabeza)
+char eliminar_elemento(NODO **cabeza)
 {
     system("cls");
     int dato;
@@ -155,14 +162,17 @@ void eliminar_elemento(NODO **cabeza)
         dato = solicitar_entero();
 
         // recorrer la lista y parar en el nodo hallado (o hasta el final)
-        while (actual->siguiente != *cabeza && actual->dato != dato)
+        do 
         {
-            previo = actual;
+            if(actual->dato == dato) {
+                previo = actual->anterior;
+                break;
+            }
             actual = actual->siguiente;
-        }
+        } while (actual != *cabeza);
 
         // Llego al final sin hallarlo
-        if (actual->siguiente == *cabeza)
+        if (previo == NULL)
         {
             printf("No se encontro nodo con el valor ingresado.\n");
         }
@@ -174,12 +184,15 @@ void eliminar_elemento(NODO **cabeza)
             if (previo == (*cabeza)->anterior)
             {
                 // Era el UNICO nodo
-                if (actual->siguiente == (*cabeza)->anterior)
+                if (actual == (*cabeza)->anterior)
                 {
-                    *cabeza = NULL;
-
-                    // Habia mas nodos
+                    printf("Se ha vaciado la lista\n");
+                    system("pause");
+                    system("cls");
+                    return '\0';
+                    
                 }
+                // Habia mas nodos
                 else
                 {
                     (actual->anterior)->siguiente = actual->siguiente;
@@ -202,6 +215,7 @@ void eliminar_elemento(NODO **cabeza)
     }
     system("pause");
     system("cls");
+    return 'a';
 }
 
 // Se pasa como doble puntero en caso de que se quiera agregar en el nodo al que apunta la cabeza
@@ -308,4 +322,24 @@ void imprimir_lista(NODO *cabeza)
     }
     system("pause");
     system("cls");
+}
+
+char liberar_lista(NODO **cabeza)
+{
+    NODO *ptr = NULL, *temp = NULL;
+    ptr = *cabeza;
+
+    if (ptr == NULL) {
+        return 'b';
+    }
+
+    ptr = ptr->siguiente;
+
+    while (ptr != *cabeza) {
+        temp = ptr;
+        ptr = ptr->siguiente;
+        free(temp);
+    } 
+
+    return 'a';
 }
